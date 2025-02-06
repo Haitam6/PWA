@@ -57,4 +57,7 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+div {
+    color: #0767a3;
+}
 </style>

@@ -27,6 +27,7 @@ export default {
       messages: [],
       joined: false,
       roomId: 'general',
+      serverId: 'tchat_server_1', // Identifiant du serveur
     };
   },
   methods: {
@@ -45,8 +46,10 @@ export default {
       if (!this.message.trim()) return;
 
       const msgData = {
-        msg: this.message,
-        roomId: this.roomId,
+        content: this.message,
+        dateEmis: new Date().toISOString(), // Date au format ISO
+        serverId: this.serverId,
+        autorId: this.pseudo, // L'ID de l'auteur est le pseudo de l'utilisateur
       };
 
       this.socket.emit('chat-msg', msgData);
@@ -55,3 +58,9 @@ export default {
   },
 };
 </script>
+
+  <style scoped>
+  div {
+    color: #0767a3;
+  }
+  </style>

@@ -7,22 +7,6 @@
     <br />
     <button @click="takePhoto">🎥 Capture</button>
     <canvas ref="canvas" style="display: none;"></canvas>
-
-    <div v-if="photo">
-      <h3>Photo Capturée :</h3>
-      <img :src="photo" alt="Captured photo" class="captured-photo" />
-      <button @click="addToGallery(photo)">Ajouter à la galerie</button>
-    </div>
-
-    <div v-if="gallery.length > 0">
-      <h3>Galerie :</h3>
-      <div class="gallery">
-        <div v-for="(image, index) in gallery" :key="index" class="gallery-item">
-          <img :src="image" alt="Captured photo" class="gallery-image" />
-          <button @click="removeFromGallery(index)">🗑 Supprimer</button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -79,8 +63,13 @@ export default {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      this.photo = canvas.toDataURL('image/png'); // Convertir en base64
-      this.showNotification('Photo capturée avec succès !');
+      const capturedPhoto = canvas.toDataURL('image/png'); // Convertir en base64
+
+      // Ajouter directement à la galerie
+      this.gallery.push(capturedPhoto);
+      localStorage.setItem('photoGallery', JSON.stringify(this.gallery));
+
+      this.showNotification('Photo ajoutée à la galerie !');
     },
 
     // Ajouter la photo à la galerie et la stocker
@@ -184,6 +173,9 @@ button {
 
 button:hover {
   background-color: #e03e3e;
+}
+div {
+  color: #0767a3;
 }
 
 </style>

@@ -1,15 +1,18 @@
 <template>
-  <div>
-    <label for="otp-input">Saisissez votre OTP :
-    <input
-      ref="otpInput"
-      v-model="otp"
-      type="text"
-      placeholder="Saisir le code OTP"
-      inputmode="numeric"
-      autocomplete="one-time-code"
-    />
+  <div class="otp-container">
+    <h2>Saisissez votre OTP </h2>
+    <label for="otp-input">
+      <input
+        id="otp-input"
+        ref="otpInput"
+        v-model="otp"
+        type="text"
+        placeholder="Saisir le code OTP"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+      />
     </label>
+    <br />
     <button @click="submitOtp">Valider</button>
   </div>
 </template>
@@ -47,10 +50,19 @@ export default {
 </script>
 
 <style scoped>
+.otp-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+h2 {
+    font-weight: bold;
+    color: #0767a3;
+}
+
 label {
     display: block;
     margin-bottom: 10px;
-    font-weight: bold;
 }
 
 input {
@@ -59,6 +71,7 @@ input {
     border-radius: 5px;
     width: 200px;
 }
+
 button {
   padding: 10px 15px;
   font-size: 16px;
@@ -68,6 +81,7 @@ button {
   transition: background 0.3s ease;
   font-weight: 500;
 }
+
 button:hover {
     background-color: #c3d21b;
 }
