@@ -4,6 +4,7 @@
       <div class="box"><CameraComponent /></div>
       <div class="box"><GeoLocation /></div>
       <div class="box"><CallButton /></div>
+      <div class="box"><OtpValidation /></div>
     </div>
   </div>
 </template>
@@ -13,12 +14,14 @@ import { defineComponent } from 'vue';
 import GeoLocation from '@/components/GeoLocation.vue';
 import CameraComponent from '@/components/Camera.vue';
 import CallButton from '@/components/CallButton.vue';
+import OtpValidation from '@/components/OtpValidation.vue';
 
 export default defineComponent({
   components: {
     CameraComponent,
     GeoLocation,
     CallButton,
+    OtpValidation,
   },
   data() {
     return {

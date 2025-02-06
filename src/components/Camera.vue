@@ -59,6 +59,9 @@ export default {
     },
     async showNotification(message) {
       if (await this.requestNotificationPermission()) {
+        if ('vibrate' in navigator) {
+          navigator.vibrate(200); // Vibre pendant 200ms
+        }
         return new Notification('Notification', {
           body: message,
           icon: this.photo || '/icons/icon-192x192.png',
