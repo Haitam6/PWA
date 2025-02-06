@@ -5,6 +5,7 @@
       <div class="box"><GeoLocation /></div>
       <div class="box"><CallButton /></div>
       <div class="box"><OtpValidation /></div>
+      <div class="box"><JoinChat /></div>
     </div>
   </div>
 </template>
@@ -15,6 +16,7 @@ import GeoLocation from '@/components/GeoLocation.vue';
 import CameraComponent from '@/components/Camera.vue';
 import CallButton from '@/components/CallButton.vue';
 import OtpValidation from '@/components/OtpValidation.vue';
+import JoinChat from '@/components/JoinChat.vue';
 
 export default defineComponent({
   components: {
@@ -22,6 +24,7 @@ export default defineComponent({
     GeoLocation,
     CallButton,
     OtpValidation,
+    JoinChat,
   },
   data() {
     return {
@@ -36,40 +39,52 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+}
+
+.components {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
+  width: 100%;
+  max-width: 900px;
   padding: 20px;
 }
 
-/* Batterie fixée sous la navbar */
-.battery-container {
-  width: 15%;
-  text-align: center;
-  padding: 10px 0;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-/* Flexbox pour les composants, alignés verticalement */
-.components {
-  display: flex;
-  flex-direction: column; /* Aligner verticalement */
-  gap: 20px; /* Espacement entre les boîtes */
-  max-width: 900px;
-  width: 100%;
-  justify-content: center;
-  align-items: center; /* Centrer horizontalement */
-}
-
-/* Style des boîtes */
 .box {
   background: white;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   text-align: center;
-  width: 100%; /* Occupe toute la largeur de son parent */
-  max-width: 400px; /* Largeur maximale pour chaque box */
-  margin: auto;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation d’apparition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .components {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
