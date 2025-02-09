@@ -1,22 +1,21 @@
 <template>
   <div id="app">
     <nav>
-  <div class="nav-links">
-    <router-link to="/">Accueil</router-link>
-    <router-link to="/gallery">Galerie</router-link>
-  </div>
-  <h1>TP PWA</h1>
-  <BatteryStatus />
-</nav>
+      <br />
+      <div class="nav-links">
+        <router-link to="/">Accueil</router-link>
+        <router-link to="/gallery">Galerie</router-link>
+        <router-link to="/chat">Chat</router-link>
+      </div>
+      <h1>TP PWA</h1>
+      <BatteryStatus />
+    </nav>
 
     <router-view />
   </div>
-  <footer class="app-footer">
-    <p>PWA réalisé par Haitam El Qassimi</p>
-  </footer>
 </template>
 
-<style scoped>
+<style>
 * {
   box-sizing: border-box;
   margin: 0;
@@ -31,7 +30,6 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
   color: #2c3e50;
 }
 
@@ -40,12 +38,15 @@ nav {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px; /* Ajoute un espacement entre les éléments */
+  gap: 10px;
+  background-color: #0a3053;
+  padding: 10px;
 }
 
 .nav-links {
   display: flex;
-  gap: 15px; /* Espacement entre les liens */
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 nav h1 {
@@ -55,7 +56,28 @@ nav h1 {
   color: white;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #0767a3;
+  padding: 10px 15px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  background-color: #0767a3;
+  color: white;
+  transform: scale(1.1);
+}
+
+nav a.router-link-exact-active {
+  background-color: #054b78;
+  color: white;
 }
 
 .app-footer {
@@ -66,7 +88,6 @@ nav h1 {
   font-size: 0.9rem;
   border-radius: 8px;
   box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
 }
 
 .battery-status {
@@ -90,34 +111,15 @@ nav h1 {
 nav, .app-footer {
   animation: slideIn 0.5s ease-out;
 }
-nav a {
-  text-decoration: none;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #0767a3;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px 15px;
-  border-radius: 5px;
-  transition: all 0.3s ease-in-out;
-}
-
-nav a:hover {
-  background-color: #0767a3;
-  color: white;
-  transform: scale(1.1);
-}
-
-nav a.router-link-exact-active {
-  background-color: #054b78;
-  color: white;
-}
 </style>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import router from './router';
 import BatteryStatus from './components/BatteryStatus.vue';
 
-export default {
+export default defineComponent({
+  name: 'App',
   components: {
     BatteryStatus,
   },
@@ -126,5 +128,5 @@ export default {
       prenom: 'Haitam',
     };
   },
-};
+});
 </script>

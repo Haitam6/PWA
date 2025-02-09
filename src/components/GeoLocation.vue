@@ -1,21 +1,35 @@
 <template>
-    <div class="geolocation">
-        <h2>Position géographique</h2>
-        <p v-if="error" class="error">{{ error }}</p>
-        <p v-else-if="latitude && longitude">
-            Latitude : {{ latitude }} <br>
-            Longitude : {{ longitude }}
-        </p>
-        <button @click="getLocation">ℹ Obtenir ma position</button>
-    </div>
+  <div class="geolocation">
+      <h2>Position géographique</h2>
+      <br />
+      <p v-if="error" class="error">{{ error }}</p>
+      <p v-else-if="latitude !== null && longitude !== null">
+          Latitude : {{ latitude }} <br>
+          Longitude : {{ longitude }}
+      </p>
+      <button @click="getLocation">ℹ Obtenir ma position</button>
+  </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const latitude = ref(null);
-const longitude = ref(null);
-const error = ref(null);
+declare global {
+interface GeolocationPosition {
+  GeolocationCordinates: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
+interface GeolocationPositionError {
+  msg: string;
+}
+}
+
+const latitude = ref<number | null>(null);
+const longitude = ref<number | null>(null);
+const error = ref<string | null>(null);
 
 const getLocation = () => {
   if ('geolocation' in navigator) {
@@ -23,6 +37,7 @@ const getLocation = () => {
       (position) => {
         latitude.value = position.coords.latitude;
         longitude.value = position.coords.longitude;
+        error.value = null;
       },
       (err) => {
         error.value = `Erreur : ${err.message}`;
@@ -36,28 +51,30 @@ const getLocation = () => {
 
 <style scoped>
 .geolocation {
-    text-align: center;
-    padding: 20px;
+  text-align: center;
+  padding: 20px;
 }
 
 .error {
-    color: red;
+  color: red;
 }
 
 button {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  font-weight: 500;
+padding: 10px 15px;
+font-size: 16px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+transition: background 0.3s ease;
+font-weight: 500;
+margin-top: 90px;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
+
 div {
-    color: #0767a3;
+  color: #0767a3;
 }
 </style>

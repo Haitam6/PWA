@@ -1,39 +1,44 @@
 <template>
-    <div class="gallery-container">
-      <h2>Galerie</h2>
-      <div v-if="gallery.length > 0" class="gallery">
-        <div v-for="(image, index) in gallery" :key="index" class="gallery-item">
-          <img :src="image" alt="Photo enregistrée" class="gallery-image" />
-          <br />
-          <button @click="removeFromGallery(index)">🗑 Supprimer</button>
-        </div>
+  <div class="gallery-container">
+    <div v-if="gallery.length > 0" class="gallery">
+      <div v-for="(image, index) in gallery" :key="index" class="gallery-item">
+        <img :src="image" alt="Photo enregistrée" class="gallery-image" />
+        <br />
+        <button @click="removeFromGallery(index)">🗑 Supprimer</button>
       </div>
-      <p v-else>Aucune photo dans la galerie.</p>
     </div>
-  </template>
+    <p v-else>Aucune photo dans la galerie.</p>
+  </div>
+</template>
 
-<script>
+<script lang="ts">
+import { ref, onMounted } from 'vue';
+
 export default {
   name: 'GalleryComponent',
-  data() {
-    return {
-      gallery: [],
-    };
-  },
-  methods: {
-    loadGallery() {
+  setup() {
+    const gallery = ref<string[]>([]);
+
+    const loadGallery = () => {
       const storedGallery = localStorage.getItem('photoGallery');
       if (storedGallery) {
-        this.gallery = JSON.parse(storedGallery);
+        gallery.value = JSON.parse(storedGallery);
       }
-    },
-    removeFromGallery(index) {
-      this.gallery.splice(index, 1);
-      localStorage.setItem('photoGallery', JSON.stringify(this.gallery));
-    },
-  },
-  mounted() {
-    this.loadGallery();
+    };
+
+    const removeFromGallery = (index: number) => {
+      gallery.value.splice(index, 1);
+      localStorage.setItem('photoGallery', JSON.stringify(gallery.value));
+    };
+
+    onMounted(() => {
+      loadGallery();
+    });
+
+    return {
+      gallery,
+      removeFromGallery,
+    };
   },
 };
 </script>
@@ -66,6 +71,7 @@ export default {
 .gallery-image:hover {
   transform: scale(1.1);
 }
+
 button {
   padding: 10px 15px;
   font-size: 16px;
@@ -79,12 +85,14 @@ button {
 button:hover {
   background-color: #e03e3e;
 }
+
 h2 {
-    font-weight: bold;
-    color: white;
+  font-weight: bold;
+  color: white;
 }
+
 p {
-    font-weight: bold;
-    color: white;
+  font-weight: bold;
+  color: white;
 }
 </style>

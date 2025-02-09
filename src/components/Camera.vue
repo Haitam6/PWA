@@ -10,28 +10,29 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { ref, onMounted } from 'vue';
+
 export default {
   name: 'CameraComponent',
-  data() {
-    return {
-      photo: null,
-      gallery: [],
-      deferredPrompt: null,
-      notificationPermission: 'default',
-    };
-  },
+  setup() {
+    const video = ref<HTMLVideoElement | null>(null);
+    const canvas = ref<HTMLCanvasElement | null>(null);
+    const gallery = ref<string[]>([]);
+    let deferredPrompt: Event | null = null;
 
-  methods: {
-    async startCamera() {
+    const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        this.$refs.video.srcObject = stream;
+        if (video.value) {
+          video.value.srcObject = stream;
+        }
       } catch (error) {
         alert("Erreur d'accès à la caméra.");
       }
-    },
-    async requestNotificationPermission() {
+    };
+
+    const requestNotificationPermission = async (): Promise<boolean> => {
       if ('Notification' in window) {
         if (Notification.permission === 'granted') return true;
         if (Notification.permission !== 'denied') {
@@ -40,89 +41,72 @@ export default {
         }
       }
       return false;
-    },
-    async showNotification(message) {
-      if (await this.requestNotificationPermission()) {
+    };
+
+    const showNotification = async (message: string) => {
+      if (await requestNotificationPermission()) {
         if ('vibrate' in navigator) {
-          navigator.vibrate(200); // Vibre pendant 200ms
+          navigator.vibrate(200);
         }
-        return new Notification('Notification', {
+        const notification = new Notification('Notification', {
           body: message,
-          icon: this.photo || '/icons/icon-192x192.png',
+          icon: '/icons/icon-192x192.png',
         });
       }
-      return null;
-    },
+    };
 
-    // Capture et sauvegarde la photo
-    takePhoto() {
-      const { video, canvas } = this.$refs;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+    const takePhoto = () => {
+      if (!video.value || !canvas.value) return;
+      const ctx = canvas.value.getContext('2d');
+      if (!ctx) return;
 
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.value.width = video.value.videoWidth;
+      canvas.value.height = video.value.videoHeight;
+      ctx.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height);
 
-      const capturedPhoto = canvas.toDataURL('image/png'); // Convertir en base64
+      const capturedPhoto = canvas.value.toDataURL('image/png');
+      gallery.value.push(capturedPhoto);
+      localStorage.setItem('photoGallery', JSON.stringify(gallery.value));
 
-      // Ajouter directement à la galerie
-      this.gallery.push(capturedPhoto);
-      localStorage.setItem('photoGallery', JSON.stringify(this.gallery));
+      showNotification('Photo ajoutée à la galerie !');
+    };
 
-      this.showNotification('Photo ajoutée à la galerie !');
-    },
-
-    // Ajouter la photo à la galerie et la stocker
-    addToGallery(photo) {
-      this.gallery.push(photo);
-      this.photo = null;
-      this.saveGallery();
-      this.showNotification('Photo ajoutée à la galerie !');
-    },
-
-    // Supprimer une image et mettre à jour le stockage
-    removeFromGallery(index) {
-      this.gallery.splice(index, 1);
-      this.saveGallery();
-      this.showNotification('Photo supprimée.');
-    },
-
-    // Sauvegarder la galerie dans localStorage
-    saveGallery() {
-      localStorage.setItem('photoGallery', JSON.stringify(this.gallery));
-    },
-
-    // Charger les images stockées au démarrage
-    loadGallery() {
+    const loadGallery = () => {
       const storedGallery = localStorage.getItem('photoGallery');
       if (storedGallery) {
-        this.gallery = JSON.parse(storedGallery);
+        gallery.value = JSON.parse(storedGallery);
       }
-    },
+    };
 
-    installApp() {
-      if (this.deferredPrompt) {
-        this.deferredPrompt.prompt();
-        this.deferredPrompt.userChoice.then((choice) => {
+    const installApp = () => {
+      if (deferredPrompt) {
+        (deferredPrompt as any).prompt();
+        (deferredPrompt as any).userChoice.then((choice: any) => {
           if (choice.outcome === 'accepted') {
             console.log('Installation acceptée');
           }
-          this.deferredPrompt = null;
+          deferredPrompt = null;
         });
       }
-    },
-  },
+    };
 
-  mounted() {
-    this.startCamera();
-    this.requestNotificationPermission();
-    this.loadGallery(); // Charger les photos au démarrage
-
-    // Gérer l'événement d'installation PWA
-    window.addEventListener('beforeinstallprompt', (event) => {
-      event.preventDefault();
-      this.deferredPrompt = event;
+    onMounted(() => {
+      startCamera();
+      requestNotificationPermission();
+      loadGallery();
+      window.addEventListener('beforeinstallprompt', (event: Event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+      });
     });
+
+    return {
+      video,
+      canvas,
+      gallery,
+      takePhoto,
+      installApp,
+    };
   },
 };
 </script>
@@ -174,8 +158,8 @@ button {
 button:hover {
   background-color: #e03e3e;
 }
+
 div {
   color: #0767a3;
 }
-
 </style>

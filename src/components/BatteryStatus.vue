@@ -1,39 +1,44 @@
 <template>
-    <div class="battery-status">
+  <div class="battery-status">
     <p v-if="isCharging">⚡🔋 {{ batteryLevel }}% </p>
     <p v-else>🔋 {{ batteryLevel }}% </p>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      batteryLevel: null,
-      isCharging: false,
-    };
-  },
+<script lang="ts">
+import { ref, onMounted } from 'vue';
 
-  methods: {
-    async getBatteryStatus() {
+export default {
+  setup() {
+    const batteryLevel = ref<number | null>(null);
+    const isCharging = ref<boolean>(false);
+
+    const getBatteryStatus = async () => {
       if ('getBattery' in navigator) {
-        const battery = await navigator.getBattery();
-        this.batteryLevel = Math.round(battery.level * 100);
-        this.isCharging = battery.charging;
+        const battery = await (navigator as any).getBattery();
+        batteryLevel.value = Math.round(battery.level * 100);
+        isCharging.value = battery.charging;
+
         battery.addEventListener('levelchange', () => {
-          this.batteryLevel = Math.round(battery.level * 100);
+          batteryLevel.value = Math.round(battery.level * 100);
         });
+
         battery.addEventListener('chargingchange', () => {
-          this.isCharging = battery.charging;
+          isCharging.value = battery.charging;
         });
       } else {
         console.log("L'API Battery Status n'est pas supportée.");
       }
-    },
-  },
+    };
 
-  mounted() {
-    this.getBatteryStatus();
+    onMounted(() => {
+      getBatteryStatus();
+    });
+
+    return {
+      batteryLevel,
+      isCharging,
+    };
   },
 };
 </script>

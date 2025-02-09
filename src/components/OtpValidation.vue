@@ -1,6 +1,7 @@
 <template>
   <div class="otp-container">
     <h2>Saisissez votre OTP </h2>
+    <br />
     <label for="otp-input">
       <input
         id="otp-input"
@@ -17,23 +18,26 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue';
+
+export default defineComponent({
+  name: 'OtpComponent',
   data() {
     return {
-      otp: '',
+      otp: '' as string,
     };
   },
   mounted() {
     this.listenForOtp();
   },
   methods: {
-    async listenForOtp() {
+    async listenForOtp(): Promise<void> {
       if ('OTPCredential' in window) {
         try {
           const otp = await navigator.credentials.get({ otp: { transport: ['sms'] } });
           if (otp) {
-            this.otp = otp.code;
+            this.otp = otp.id;
             this.submitOtp();
           }
         } catch (error) {
@@ -41,12 +45,11 @@ export default {
         }
       }
     },
-    submitOtp() {
+    submitOtp(): void {
       console.log('OTP soumis :', this.otp);
-      // Ici, tu envoies le code au backend pour vérification
     },
   },
-};
+});
 </script>
 
 <style scoped>
