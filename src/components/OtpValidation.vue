@@ -18,26 +18,23 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-
-export default defineComponent({
-  name: 'OtpComponent',
+<script>
+export default {
   data() {
     return {
-      otp: '' as string,
+      otp: '',
     };
   },
   mounted() {
     this.listenForOtp();
   },
   methods: {
-    async listenForOtp(): Promise<void> {
+    async listenForOtp() {
       if ('OTPCredential' in window) {
         try {
           const otp = await navigator.credentials.get({ otp: { transport: ['sms'] } });
           if (otp) {
-            this.otp = otp.id;
+            this.otp = otp.code;
             this.submitOtp();
           }
         } catch (error) {
@@ -45,11 +42,11 @@ export default defineComponent({
         }
       }
     },
-    submitOtp(): void {
+    submitOtp() {
       console.log('OTP soumis :', this.otp);
     },
   },
-});
+};
 </script>
 
 <style scoped>
